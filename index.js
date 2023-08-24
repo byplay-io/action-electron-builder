@@ -127,12 +127,12 @@ const runAction = () => {
 		}
 	}
 
-	log(`Building${release ? " and releasing" : ""} the Electron app…`);
+	log(`Building${release ? " and releasing" : ""} the Electron app 1…`);
 	const cmd = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
 			run(
-				`${cmd} --${platform} ${
+				`nox ${cmd} --${platform} ${
 					release ? "--publish always" : ""
 				} ${args}`,
 				appRoot,
