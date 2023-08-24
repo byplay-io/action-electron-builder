@@ -108,6 +108,8 @@ const runAction = () => {
 	log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
 	run(useNpm ? "npm install" : "yarn", pkgRoot);
 
+	run("npm install electron-builder", pkgRoot);
+
 	// Run NPM build script if it exists
 	if (skipBuild) {
 		log("Skipping build script because `skip_build` option is set");
@@ -130,7 +132,7 @@ const runAction = () => {
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
 			run(
-				`npx ${cmd} --${platform} ${
+				`${cmd} --${platform} ${
 					release ? "--publish always" : ""
 				} ${args}`,
 				appRoot,
