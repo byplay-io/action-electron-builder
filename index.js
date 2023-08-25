@@ -91,6 +91,7 @@ const runAction = () => {
 
 	// Copy "github_token" input variable to "GH_TOKEN" env variable (required by `electron-builder`)
 	setEnv("GH_TOKEN", getInput("github_token", true));
+	log(`GH TOKEN LENGTH ${(getInput("github_token", true) ?? '').length}`);
 
 	// Require code signing certificate and password if building for macOS. Export them to environment
 	// variables (required by `electron-builder`)
