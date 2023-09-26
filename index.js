@@ -1,5 +1,5 @@
 const { execSync } = require("child_process");
-const { existsSync, readFileSync } = require("fs");
+const { existsSync, readFileSync, readdirSync } = require("fs");
 const { join } = require("path");
 
 /**
@@ -99,8 +99,16 @@ const runAction = () => {
 		setEnv("CSC_LINK", getInput("mac_certs"));
 		setEnv("CSC_KEY_PASSWORD", getInput("mac_certs_password"));
 	} else if (platform === "windows") {
-		setEnv("CSC_LINK", getInput("windows_certs"));
-		setEnv("CSC_KEY_PASSWORD", getInput("windows_certs_password"));
+
+    const codeSignDir = join(__dirname, "CodeSignTool-v1.2.7-windows");
+    console.log('code sign dir', codeSignDir);
+    console.log(readdirSync(codeSignDir));
+
+    setEnv("WINDOWS_CODE_SIGN_PATH", codeSignDir);
+    setEnv("WINDOWS_SIGN_USER_NAME", getInput("windows_sign_user_name"));
+    setEnv("WINDOWS_SIGN_USER_PASSWORD", getInput("windows_sign_user_password"));
+    setEnv("WINDOWS_SIGN_CREDENTIAL_ID", getInput("windows_sign_credential_id"));
+    setEnv("WINDOWS_SIGN_USER_TOTP", getInput("windows_sign_user_totp"));
 	}
 
 	// Disable console advertisements during install phase
