@@ -100,11 +100,10 @@ const runAction = () => {
 		setEnv("CSC_KEY_PASSWORD", getInput("mac_certs_password"));
 	} else if (platform === "windows") {
 
-    const codeSignDir = join(__dirname, "CodeSignTool-v1.2.7-windows");
+    const codeSignDir = join(pkgRoot, "CodeSignTool-v1.2.7-windows");
     console.log('code sign dir', codeSignDir);
     console.log(readdirSync(codeSignDir));
 
-    setEnv("WINDOWS_CODE_SIGN_PATH", codeSignDir);
     setEnv("WINDOWS_SIGN_USER_NAME", getInput("windows_sign_user_name"));
     setEnv("WINDOWS_SIGN_USER_PASSWORD", getInput("windows_sign_user_password"));
     setEnv("WINDOWS_SIGN_CREDENTIAL_ID", getInput("windows_sign_credential_id"));
@@ -135,30 +134,27 @@ const runAction = () => {
 			}
 		}
 	}
-  const platforms = platform == "mac" ? ["mac"] : ["win", "linux"];
 
-  for(const builtPlatform of platforms) {
-    log(`Building${release ? " and releasing" : ""} the Electron app for ${builtPlatform}…`);
-    const cmd = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
-    for (let i = 0; i < maxAttempts; i += 1) {
-      try {
-        run(
-          `npm exec -- ${cmd} --${builtPlatform} ${
-          release ? "--publish always" : ""
-        } ${args}`,
-          appRoot,
-        );
-        break;
-      } catch (err) {
-        if (i < maxAttempts - 1) {
-          log(`Attempt ${i + 1} failed:`);
-          log(err);
-        } else {
-          throw err;
-        }
-      }
-    }
-  }
+	log(`Building${release ? " and releasing" : ""} the Electron app 1…`);
+	const cmd = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
+	for (let i = 0; i < maxAttempts; i += 1) {
+		try {
+			run(
+				`npm exec -- ${cmd} --${platform} ${
+					release ? "--publish always" : ""
+				} ${args}`,
+				appRoot,
+			);
+			break;
+		} catch (err) {
+			if (i < maxAttempts - 1) {
+				log(`Attempt ${i + 1} failed:`);
+				log(err);
+			} else {
+				throw err;
+			}
+		}
+	}
 };
 
 runAction();
