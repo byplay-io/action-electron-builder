@@ -143,7 +143,7 @@ const runAction = () => {
     for (let i = 0; i < maxAttempts; i += 1) {
       try {
         run(
-          `npm exec -- ${cmd} ${builtPlatform} ${
+          `npm exec -- ${cmd} --${builtPlatform} ${
           release ? "--publish always" : ""
         } ${args}`,
           appRoot,
