@@ -103,7 +103,7 @@ const runAction = () => {
     const codeSignDir = join(pkgRoot, "CodeSignTool-v1.2.7-windows");
     console.log('code sign dir', codeSignDir);
     console.log(readdirSync(codeSignDir));
-
+    setEnv("WINDOWS_CODE_SIGN_PATH", codeSignDir);
     setEnv("WINDOWS_SIGN_USER_NAME", getInput("windows_sign_user_name"));
     setEnv("WINDOWS_SIGN_USER_PASSWORD", getInput("windows_sign_user_password"));
     setEnv("WINDOWS_SIGN_CREDENTIAL_ID", getInput("windows_sign_credential_id"));
