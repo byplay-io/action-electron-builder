@@ -46,6 +46,19 @@ inputs:
     description: Maximum number of attempts for completing the build and release step
     required: false
     default: "1"
+  windows_sign_user_name:
+    description: ssl.com user name for eSigner
+    required: false
+  windows_sign_user_password:
+    description: ssl.com user password for eSigner
+    required: false
+  windows_sign_credential_id:
+    description: ssl.com credential id (from esigner)
+    required: false
+  windows_sign_user_totp:
+    description: ssl.com totp secret
+    required: false
+
 
   # Deprecated
   app_root:
