@@ -70,6 +70,7 @@ const runAction = () => {
 	const buildScriptName = getInput("build_script_name", true);
 	const skipBuild = getInput("skip_build") === "true";
 	const useVueCli = getInput("use_vue_cli") === "true";
+	const skipInstall = getInput("skip_install") === "true";
 	const args = getInput("args") || "";
 	const maxAttempts = Number(getInput("max_attempts") || "1");
 
@@ -113,8 +114,12 @@ const runAction = () => {
 	// Disable console advertisements during install phase
 	setEnv("ADBLOCK", true);
 
-	log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
-	run(useNpm ? "npm install" : "yarn", pkgRoot);
+	if (skipInstall) {
+		log("Skipping install script because `skip_install` option is set");
+	} else {
+		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
+		run(useNpm ? "npm install" : "yarn", pkgRoot);
+	}
 
 	run("npm install electron-builder", pkgRoot);
 
