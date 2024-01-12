@@ -81,10 +81,12 @@ const runAction = () => {
 
 	const pkgJsonPath = join(pkgRoot, "package.json");
 	const pkgLockPath = join(pkgRoot, "package-lock.json");
+	const pnpmLockPath = join(pkgRoot, "pnpm-lock.yaml");
 
 	// Determine whether NPM should be used to run commands (instead of Yarn, which is the default)
 	const useNpm = existsSync(pkgLockPath);
-	log(`Will run ${useNpm ? "NPM" : "Yarn"} commands in directory "${pkgRoot}"`);
+	const usePnpm = existsSync(pnpmLockPath);
+	log(`Will run ${useNpm ? "NPM" : usePnpm ? "PNPM" : "Yarn"} commands in directory "${pkgRoot}"`);
 
 	// Make sure `package.json` file exists
 	if (!existsSync(pkgJsonPath)) {
@@ -118,15 +120,15 @@ const runAction = () => {
 	if (skipInstall) {
 		log("Skipping install script because `skip_install` option is set");
 	} else {
-		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
-		run(useNpm ? "npm install" : "yarn", pkgRoot);
+		log(`Installing dependencies using ${useNpm ? "NPM" : usePnpm ? "PNPM" : "Yarn"}…`);
+		run(useNpm ? "npm install" : usePnpm ? "pnpm install" : "yarn", pkgRoot);
 	}
 
 	if (skipBuilderInstall) {
 		log("Skipping install electron builder because `skip_builder_install` option is set");
 	} else {
-		log(`Installing electron-builder using ${useNpm ? "NPM" : "Yarn"}…`);
-		run(useNpm ? "npm install electron-builder" : "yarn add electron-builder", pkgRoot);
+		log(`Installing electron-builder using  ${useNpm ? "NPM" : usePnpm ? "PNPM" : "Yarn"}…`);
+		run(useNpm ? "npm install electron-builder" : usePnpm ? "pnpm add electron-builder" : "yarn add electron-builder", pkgRoot);
 	}
 
 	// Run NPM build script if it exists
@@ -136,6 +138,11 @@ const runAction = () => {
 		log("Running the build script…");
 		if (useNpm) {
 			run(`npm run ${buildScriptName} --if-present`, pkgRoot);
+		} else if (usePnpm) {
+			const pkgJson = JSON.parse(readFileSync(pkgJsonPath, "utf8"));
+			if (pkgJson.scripts && pkgJson.scripts[buildScriptName]) {
+				run(`pnpm run ${buildScriptName}`, pkgRoot);
+			}
 		} else {
 			// TODO: Use `yarn run ${buildScriptName} --if-present` once supported
 			// https://github.com/yarnpkg/yarn/issues/6894
