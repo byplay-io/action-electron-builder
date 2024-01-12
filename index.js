@@ -71,6 +71,7 @@ const runAction = () => {
 	const skipBuild = getInput("skip_build") === "true";
 	const useVueCli = getInput("use_vue_cli") === "true";
 	const skipInstall = getInput("skip_install") === "true";
+	const skipBuilderInstall = getInput("skip_builder_install") === "true";
 	const args = getInput("args") || "";
 	const maxAttempts = Number(getInput("max_attempts") || "1");
 
@@ -121,7 +122,12 @@ const runAction = () => {
 		run(useNpm ? "npm install" : "yarn", pkgRoot);
 	}
 
-	run("npm install electron-builder", pkgRoot);
+	if (skipBuilderInstall) {
+		log("Skipping install electron builder because `skip_builder_install` option is set");
+	} else {
+		log(`Installing electron-builder using ${useNpm ? "NPM" : "Yarn"}…`);
+		run(useNpm ? "npm install electron-builder" : "yarn add electron-builder", pkgRoot);
+	}
 
 	// Run NPM build script if it exists
 	if (skipBuild) {
