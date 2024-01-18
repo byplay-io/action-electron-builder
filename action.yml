@@ -50,6 +50,10 @@ inputs:
     description: Other arguments to pass to the `electron-builder` command, e.g. configuration overrides
     required: false
     default: ""
+  replace_repository:
+    description: If value exists before-release.js script will be requested from source code with GH_REPOSITORY process env before npm release command
+    required: false
+    default: ""
   max_attempts:
     description: Maximum number of attempts for completing the build and release step
     required: false

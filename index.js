@@ -74,6 +74,7 @@ const runAction = () => {
 	const skipBuilderInstall = getInput("skip_builder_install") === "true";
 	const args = getInput("args") || "";
 	const maxAttempts = Number(getInput("max_attempts") || "1");
+	const replaceRepository = getInput("replace_repository") || "";
 
 	// TODO: Deprecated option, remove in v2.0. `electron-builder` always requires a `package.json` in
 	// the same directory as the Electron app, so the `package_root` option should be used instead
@@ -82,6 +83,7 @@ const runAction = () => {
 	const pkgJsonPath = join(pkgRoot, "package.json");
 	const pkgLockPath = join(pkgRoot, "package-lock.json");
 	const pnpmLockPath = join(pkgRoot, "pnpm-lock.yaml");
+	const beforeReleaseScript = join(pkgRoot, "before-release.js");
 
 	// Determine whether NPM should be used to run commands (instead of Yarn, which is the default)
 	const useNpm = existsSync(pkgLockPath);
@@ -157,8 +159,18 @@ const runAction = () => {
 	const cmd = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
+			let replacePackageJsonCommand = "";
+			if (replaceRepository?.length && existsSync(beforeReleaseScript)) {
+				setEnv("GH_REPOSITORY", replaceRepository);
+
+				// The source code should contain before-release.js file
+				replacePackageJsonCommand = `node before-release.js`
+			}
+			log(`Running ${replacePackageJsonCommand.length ? `${replacePackageJsonCommand} &&` : ''} npm exec -- ${cmd} --${platform} ${
+				release ? "--publish always" : ""
+			} ${args}`)
 			run(
-				`npm exec -- ${cmd} --${platform} ${
+				`${replacePackageJsonCommand.length ? `${replacePackageJsonCommand} &&` : ''} npm exec -- ${cmd} --${platform} ${
 					release ? "--publish always" : ""
 				} ${args}`,
 				appRoot,
