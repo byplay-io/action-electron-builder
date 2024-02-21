@@ -104,7 +104,7 @@ const runAction = () => {
 		setEnv("CSC_KEY_PASSWORD", getInput("mac_certs_password"));
 	} else if (platform === "windows") {
 
-    const codeSignDir = join(pkgRoot, "CodeSignTool-v1.2.7-windows");
+    const codeSignDir = join(pkgRoot, "CodeSignTool-v1.3.0-linux")
     console.log('code sign dir', codeSignDir);
     console.log(readdirSync(codeSignDir));
     setEnv("WINDOWS_CODE_SIGN_PATH", codeSignDir);
