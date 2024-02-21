@@ -50,6 +50,9 @@ inputs:
     description: Other arguments to pass to the `electron-builder` command, e.g. configuration overrides
     required: false
     default: ""
+  platform:
+    required: false
+    description: Specify the platform to build on (windows, linux, mac)
   max_attempts:
     description: Maximum number of attempts for completing the build and release step
     required: false

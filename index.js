@@ -64,7 +64,7 @@ const getInput = (name, required) => {
  * Installs NPM dependencies and builds/releases the Electron app
  */
 const runAction = () => {
-	const platform = getPlatform();
+	const platform = getInput("platform") || getPlatform();
 	const release = getInput("release", true) === "true";
 	const pkgRoot = getInput("package_root", true);
 	const buildScriptName = getInput("build_script_name", true);
